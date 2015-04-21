@@ -1,0 +1,4 @@
+.tmp
+cmd/
+jobs/
+*.sql.gz
