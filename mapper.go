@@ -31,6 +31,9 @@ func (v StmtRowMapperValidator) Map(src <-chan StmtValTuple) <-chan StmtValTuple
 		mapperSrc := make(chan StmtValTuple)
 		mapperSnk := startMapWorkers(v.Mapper, mapperSrc)
 
+		defer close(mapperSrc)
+		defer close(snk)
+
 		for t := range src {
 			mapperSrc <- t
 			mapperRes := <-mapperSnk
@@ -47,9 +50,6 @@ func (v StmtRowMapperValidator) Map(src <-chan StmtValTuple) <-chan StmtValTuple
 
 			snk <- mapperRes
 		}
-
-		close(mapperSrc)
-		close(snk)
 	}()
 
 	return snk
