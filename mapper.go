@@ -19,7 +19,7 @@ type StmtRowValidatedMapper interface {
 }
 
 // `StmtRowMapperValidator` acts as a src and snk for a given `StmtRowValidatedMapper` while
-// while using the result of that mapper's Validate function as a trigger to break
+// while using the result of that mapper's Validate function as a trigger to exit on error
 type StmtRowMapperValidator struct {
 	Mapper StmtRowValidatedMapper
 }
@@ -39,10 +39,10 @@ func (v StmtRowMapperValidator) Map(src <-chan StmtValTuple) <-chan StmtValTuple
 			switch {
 			case err != nil:
 				log.Println(err)
-				break
+				return
 			case !valid:
 				log.Println(ErrMapValidationFailed)
-				break
+				return
 			}
 
 			snk <- mapperRes
